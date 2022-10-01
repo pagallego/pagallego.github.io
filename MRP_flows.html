@@ -1,0 +1,694 @@
+<html>
+<head>
+  <title>From Database</title>
+ <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <meta name="description" content="Canvas Flowmap Layer with LeafletJS." />  
+  
+  
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3/dist/leaflet.css" />
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.js"></script>
+  
+  
+
+	
+  <!-- Custom fonts for this template -->
+  
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+ 
+ 
+	
+ <!-- first load LeafletJS -->
+  <script src="https://unpkg.com/leaflet@1.3/dist/leaflet.js"></script>
+
+  <!-- load Esri Leaflet because we want to use an Esri basemap -->
+  <script src="https://unpkg.com/esri-leaflet@2.1/dist/esri-leaflet.js"></script>
+
+  <!-- load animation tweening lib requirement for CanvasFlowMapLayer -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/17.2.0/Tween.min.js"></script>
+
+  <!-- then load CanvasFlowMapLayer -->
+  <script src="https://jwasilgeo.github.io/Leaflet.Canvas-Flowmap-Layer/src/CanvasFlowmapLayer.js"></script>
+
+  
+ <script src="../json/som.js" type="text/javascript"></script>
+ <script src="../json/world.js" type="text/javascript"></script>
+  
+  <!-- also load 3rd-party CSV parsing libary just for this demo  -->
+  <script src="https://unpkg.com/papaparse@4.3/papaparse.min.js"></script>
+  
+  <!-- BOOTSTRAP CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+  
+<style>
+
+body{font-family: 'Rubik', Arial;}
+
+#map{ height: 100% }
+
+/* Hide attribution control, beware with data license!!*/
+	.leaflet-control-attribution,
+	div#cartodb-gmaps-attribution {
+	  display: none;
+}	
+ 	
+ .container{z-index:1000;position:absolute;text-align:center; top:20px;width:100%}  
+
+
+.legend {
+position: absolute;
+bottom:10px;
+right:10px;
+z-index:1000;
+padding:5px;
+background-color: rgba(255,255,255, 0.4);
+border: 0px solid white;
+line-height: 1;
+color:black;
+
+
+}
+
+.legend-labels{
+margin:0px;
+margin-bottom:0px;
+padding:6px;
+text-align:justify;
+list-style:none;
+font-size:10px;
+color:black;
+font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+width:170px;
+
+
+}
+.legend-labels2{
+margin:0px;
+margin-bottom:0px;
+padding:7px;
+float:right;
+list-style:none;
+font-size:9px;
+color:black;
+width:170px;
+font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+
+}
+
+.legend ul.legend-labels li span {
+
+line-height:100;
+float: left;
+margin-top:20px;
+width: 50px;
+margin-right:5px;
+margin-left: 0px;
+border: 0px solid white;
+vertical-align: middle;
+margin-top:3px;
+
+}
+
+.legend ul.legend-labels2 li span {
+border-radius: 50%/50%; 
+line-height:100;
+float: left;
+height: 7px;
+width:7px;
+margin-right:5px;
+margin-left: 0px;
+border: 1px solid white;
+vertical-align: middle;
+
+}
+.legend-source {
+font-size:10px
+}
+
+#menu a.selected{ 
+      color: black;
+	  background:white
+    }
+
+ 
+.btn {
+box-shadow: 0 5px 5px 0 rgba(0,0,0,0.1), 0 17px 50px 0 rgba(0,0,0,0.1);
+padding: 5px;
+margin-top:5px;
+min-width: 170px;
+}
+
+li {
+
+padding-bottom:3px
+}
+ 
+
+.dropdown-menu{
+    padding: 0px;
+    min-width: 170px;
+    z-index:100000;
+}
+
+
+.scrollable-menu {
+		height: auto;
+		max-height: 130px;
+		overflow-x: hidden;
+	}	
+
+
+	
+	
+	
+	
+	
+
+    #menu { position: absolute; bottom: 10; left: 10; width: 130px; height:460px; z-index:10;border: 0px solid #777777;}
+
+	
+	
+    #menu a.selected{ 
+      color: black;
+	  background:white
+    }
+
+
+
+
+
+
+	
+		  
+  
+.btn {
+padding: 5px;
+margin-top:5px;
+min-width: 170px;
+}
+
+
+
+
+.dropdown-menu{
+    padding: 0px;
+    min-width: 170px;
+    z-index:100000;
+}	
+
+
+ #box{
+        position: absolute;
+        top: 60px;
+        left: 20px;
+        width: 200px;
+        height: 170px;
+        opacity: 0.9;
+        padding: 5px 10px 5px 10px;
+        border-radius: 25px;
+        background-color: #FFF;
+        color: #fdb462;
+
+  }	
+  
+
+
+a.close{
+			 text-align:center;
+			 border: 2px solid white;
+			 opacity:1;
+		
+			 background:transparent;
+		     text-shadow:none;
+			 padding:5px;
+			 color:white
+			}
+			
+			
+.fade {
+  opacity: 0;
+  -webkit-transition: opacity 0.15s linear;
+  -moz-transition: opacity 0.15s linear;
+  -o-transition: opacity 0.15s linear;
+  transition: opacity 0.15s linear;
+}
+.fade.in {
+  opacity: 1;
+}
+
+
+.scrollable-menu {
+		height: auto;
+		max-height: 130px;
+		overflow-x: hidden;
+	}	
+
+
+</style>
+</head>
+<body>
+<!--
+<a id="myBtn" href="?source=ISO3_flows">Try it</a>
+<a id="myBtn2" href="?source=ISO3_flow">Try it</a>
+-->
+
+<!--FLTERS-->
+<div  class="container">
+  <div  class="row">
+   
+
+
+
+
+<!--
+<div class="btn-group">
+	 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+     <i style="font-size:12px; color:rgba( 56, 92, 150, 1.00 );margin-right:10px" class="fas fa-filter"></i><span class="page-title"></span><span class="selection"> </span><span class="caret"></span>
+     </button>
+		 <ul  class="dropdown-menu" role="menu">   
+		
+				 <li style="padding:5px 0px 0px 20px;font-weight:bold" >Filter by Year</li>
+				
+				 <li><a  href="?source=guinea_2017">2017</a></li>
+				 <li><a  href="?source=guinea_2018">2018</a></li>
+				 <li><a  href="?source=guinea_2019">2019</a></li>
+	            
+	             
+		</ul>
+	
+	</div>-->
+
+</div>
+
+</div>	
+<div style="background-color:white" id='map'>
+
+<!--Legend-->
+<div class='legend'>
+</ul>
+
+<div style="padding:5px;font-size:14px" class='legend-title'>Newly Arrived Households (*)</div>
+<div class='legend-scale'>
+<ul class='legend-labels'>
+<li><span style="background-color:#669999;height: 8px;"></span>  > 300 Households</li>
+<li><span style="background-color:#669999;height: 6px;"></span>    200 - 300 Households</li>
+<li ><span style="background-color:#669999;height: 4px;"></span>   100 - 200 Households</li>
+<li ><span style="background-color:#669999; height: 3px"></span> 50 - 100 Households</li>
+<li ><span style="background-color:#669999; height: 2px"></span> 20 - 50 Households</li>
+<li ><span style="background-color:#669999; height: 1px"></span> 1 - 20 Households</li>
+
+<!--Jenks Natural Breaks Optimization			
+			
+Jenks Natural Breaks Optimization			
+			
+class	lower	upper	count
+1		 51	  	  153	  100
+2		154	 	  258	   97
+3		259	 	  407	   98
+4		408	 	  699	  101
+5		700	   	 2223	  142
+6  	   2240	 	60621	   59
+
+GVF	9184779477	11826552815	0.223376446
+-->
+<div style="margin-top:5px" >(*) The flows mapped above are based on sample of 9,000 hoseholds registered under the MRP program in September 2022. </div>
+</ul>
+
+
+
+
+
+<!--<div style="font-size:9px" >(2) Data classification method: Jenks natural breaks classification</div>-->
+</div>
+
+<!--<div class='legend-source'> Source:<a href='http.migration.iom.int'>DTM</a></div>-->
+</div>
+</div>
+
+<script>
+    var oneToManyFlowmapLayer;
+    var map = L.map('map',{ 
+	 attributionControl: false,
+     scrollWheelZoom: true,
+	 zoomControl:true
+    }
+	
+	);
+    var color1= "'red'";
+	var value1= 5;
+    if (L.Browser.mobile) {
+      map.setView([5.685758, 46.819304], 2);
+    } else {
+      map.setView([5.685758, 46.819304], 6);
+    }
+
+	L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.png', {
+	    subdomains: 'abcd',
+		//type: 'sat',
+	   // ext: 'jpg',
+	    opacity: 0,
+         attributionControl: false,	   
+        //attribution: '<a href="">&#174 Pablo Gallego / Migrant Report.&#124;&#124;',
+		//subdomains: '1234'
+        }).addTo(map);
+		//http://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.png
+		//http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}
+		//http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png
+		//http://a{s}.acetate.geoiq.com/tiles/acetate-hillshading/{z}/{x}/{y}.png 
+		//http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png
+		//http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}
+		
+  //Esri resources are faster	
+ L.esri.basemapLayer('TerrainLabels').addTo(map);
+
+	/*"Streets", "Topographic", "Oceans", "OceansLabels", "NationalGeographic", "Gray", "GrayLabels", "DarkGray", "DarkGrayLabels", "Imagery", "ImageryLabels", "ImageryTransportation", 
+"ImageryClarity", "ShadedRelief", "ShadedReliefLabels", "Terrain", "TerrainLabels" or "USATopo"
+	*/
+	
+/*var mali={	"type": "FeatureCollection",
+
+
+	"features": [
+
+		{
+			"type": "Feature",
+			"properties": {
+				"popupContent": "Maritime delimitation"
+			},
+			"geometry": {
+				
+				 "type": "Polygon",
+        "coordinates": [[
+            [-104.05, 48.99],
+            [-97.22,  48.98],
+            [-96.58,  45.94],
+            [-104.03, 45.94],
+            [-104.05, 48.99]
+        ]]
+			}
+		}
+	]
+}	
+	
+*/	
+	var myStyle = {
+    "color": "grey",
+    "weight": 0,
+    "opacity": 0.99
+};
+
+var myStyle1 = {
+    "color": "#ccc",
+    "weight": 1,
+    "fillOpacity": 0.1
+};
+
+L.geoJSON(somalia, {
+    style: myStyle
+}).addTo(map);	
+			
+
+L.geoJSON(world, {
+   style: myStyle1
+}).addTo(map);	
+			
+		
+
+	
+	
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+
+	
+	}
+	
+ function myFunction(link){
+ 
+  
+  //http://www.pablogallego-gis.com/
+  //alert(link) 
+
+
+  //document.getElementById("map").innerHTML = link;
+	
+
+	//https://pablo-cartodb.carto.com/csv/Flows_MRP.csv
+
+		Papa.parse( "Flows_MRP.csv", {
+      //"SELECT * FROM acled_2017 where event_type in ("+ incident + ") and country in ("+ country + ") and year in ("+ year + ")"
+	  
+	  download: true,
+      header: true,
+      dynamicTyping: true,
+      skipEmptyLines: true,
+      complete: function(results) {
+        var geoJsonFeatureCollection = {
+		// collection of GeoJSON point features
+        // with origin and destination attribute properties
+        // see discussion above, demos, and CSV example data sources
+          type: 'FeatureCollection',
+          features: results.data.map(function(datum) {
+            return {
+              type: 'Feature',
+              geometry: {
+                type: 'Point',
+                coordinates: [datum.s_lon, datum.s_lat]
+              },
+              properties: datum
+            }
+          })
+        };
+
+        var oneToManyFlowmapLayer = L.canvasFlowmapLayer(geoJsonFeatureCollection, {
+          originAndDestinationFieldIds: {
+            originUniqueIdField: 'DepartureISO3',
+            originGeometry: {
+              x: 's_lon',
+              y: 's_lat'
+            },
+            destinationUniqueIdField: 'DestinationISO3',
+            destinationGeometry: {
+              x: 'e_lon',
+              y: 'e_lat'
+            }
+          },
+		  
+		  
+	     animatedCanvasBezierStyle: {
+            type: 'simple',
+            symbol: {
+              strokeStyle: 'black',
+              lineWidth: 2,
+              lineDashOffsetSize: 1,
+              lineCap: 'round',
+              shadowColor: 'black',
+              shadowBlur: 0
+            }
+          },
+	
+
+	
+
+			 canvasBezierStyle: {
+            type: 'classBreaks',
+            field: 'value',
+            classBreakInfos: [{
+             
+            classMinValue: 0,
+              classMaxValue: 20,
+              symbol: {
+                strokeStyle: '#669999',
+                lineWidth: 0.2,
+                lineCap: 'round',
+                shadowColor: '#669999',
+                shadowBlur: 0
+              }
+            },
+
+             {
+
+			 classMinValue: 21,
+              classMaxValue: 50,
+              symbol: {
+                strokeStyle: '#669999',
+                lineWidth: 1,
+                lineCap: 'round',
+                shadowColor: '#669999',
+                shadowBlur: 0
+              }
+            }
+			, {
+              classMinValue: 51,
+              classMaxValue: 100,
+              symbol: {
+                strokeStyle: '#669999',
+                lineWidth: 3,
+                lineCap: 'round',
+                shadowColor: '#669999',
+                shadowBlur: 0
+              }
+            }
+			
+			, {
+              classMinValue: 101,
+              classMaxValue: 200,
+              symbol: {
+                strokeStyle: '#669999',
+                lineWidth: 5,
+                lineCap: 'round',
+                shadowColor: '#669999',
+                shadowBlur: 0
+              }
+            },
+
+			{
+              classMinValue: 201,
+              classMaxValue: 300,
+              symbol: {
+                strokeStyle: '#669999',
+                lineWidth: 10,
+                lineCap: 'round',
+                shadowColor: '#669999',
+                shadowBlur: 0
+              }
+            },
+				{
+              classMinValue: 301,
+              classMaxValue: 460,
+              symbol: {
+                strokeStyle: '#669999',
+                lineWidth: 15,
+                lineCap: 'round',
+                shadowColor: '#669999',
+                shadowBlur: 0
+              }
+            }
+			
+			
+			],
+            // the layer will use the defaultSymbol if a data value doesn't fit
+            // in any of the defined classBreaks
+            defaultSymbol: {
+             strokeStyle: 'red',
+                lineWidth:2,
+                lineCap: 'round',
+				//weight:0.01,
+			   // opacity:0.001,
+                shadowColor: '',
+                shadowBlur: 0
+            },
+          },
+		
+  style: function(geoJsonFeature) {
+
+ 
+  // use leaflet's path styling options
+
+  // since the GeoJSON feature properties are modified by the layer,
+  // developers can rely on the "isOrigin" property to set different
+  // symbols for origin vs destination CircleMarker stylings
+
+ if (geoJsonFeature.properties.isOrigin) {
+    return {
+      renderer: oneToManyFlowmapLayer, // recommended to use your own L.canvas()
+      radius: 2,
+      weight: 1,
+      color: 'black',
+      fillColor: 'white',
+      fillOpacity: 1
+    };
+  } else {
+    return {
+      renderer: oneToManyFlowmapLayer,
+      radius: 2,
+      weight: 1,
+      color: 'black',
+      fillColor: 'white',
+      fillOpacity: 1
+    };
+  }
+  
+},
+          pathDisplayMode: 'all',
+          animationStarted: true,
+          animationEasingFamily: 'Cubic',
+          animationEasingType: 'Out',
+		  
+          animationDuration: 2000
+        }).addTo(map);
+		
+		
+		
+		
+
+        /*/ since this demo is using the optional "pathDisplayMode" as "selection",
+        // it is up to the developer to wire up a click or mouseover listener
+        // and then call the "selectFeaturesForPathDisplay()" method to inform the layer
+        // which Bezier paths need to be drawn
+        oneToManyFlowmapLayer.on('mouseover', function(e) {
+          if (e.sharedOriginFeatures.length) {
+            oneToManyFlowmapLayer.selectFeaturesForPathDisplay(e.sharedOriginFeatures, 'SELECTION_NEW');
+          }
+          if (e.sharedDestinationFeatures.length) {
+            oneToManyFlowmapLayer.selectFeaturesForPathDisplay(e.sharedDestinationFeatures, 'SELECTION_NEW');
+          }
+        });
+
+        // immediately select an origin point for Bezier path display,
+        // instead of waiting for the first user click event to fire
+        oneToManyFlowmapLayer.selectFeaturesForPathDisplayById('s_city_id', 562, true, 'SELECTION_NEW');*/
+      }
+    });
+	
+
+
+
+
+	};
+	  </script>
+
+
+
+<script>
+//paste this code under the head tag or in a separate js file.
+	// Wait for window load
+	$(window).load(function() {
+		// Animate loader off screen
+		//$(".se-pre-con").fadeOut("slow");
+		
+		var source = getParameterByName('source');
+		myFunction(source) 
+		var selectedTitle = $(".dropdown-menu li a[href='?source=" + source + "']").text();
+		$(".page-title").text( selectedTitle );
+	
+	
+	});
+	
+
+	
+</script>
+<script>
+	
+$(".dropdown-menu li a").click(function(e){
+    var selText = $(this).text();
+    $(this).parents('.input-group').find('.dropdown-toggle').html(selText+' <span class="caret"></span>');       
+});
+
+
+</script>
+
+
+
+ 
+</body>
+<div class="se-pre-con"></div>
+</html>
