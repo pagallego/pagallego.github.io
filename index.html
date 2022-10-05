@@ -78,10 +78,10 @@ margin-bottom:0px;
 padding:6px;
 text-align:justify;
 list-style:none;
-font-size:11px;
+font-size:12px;
 color:black;
 font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
-width:190px;
+width:210px;
 
 
 }
@@ -93,7 +93,7 @@ float:right;
 list-style:none;
 font-size:9px;
 color:black;
-width:250px;
+width:300px;
 font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
 
 }
@@ -281,6 +281,9 @@ a.close{
 	
 	</div>-->
 
+	
+	
+	
 </div>
 
 </div>	
@@ -292,32 +295,37 @@ a.close{
 <div style="padding:5px;font-size:14px" class='legend-title'>Newly Arrived Households (*)</div>
 <div class='legend-scale'>
 <ul class='legend-labels'>
-<li><span style="background-color:#669999;height: 8px;"></span>  > 300 Households</li>
-<li><span style="background-color:#669999;height: 6px;"></span>    200 - 300 Households</li>
-<li ><span style="background-color:#669999;height: 4px;"></span>   100 - 200 Households</li>
-<li ><span style="background-color:#669999; height: 3px"></span> 50 - 100 Households</li>
-<li ><span style="background-color:#669999; height: 2px"></span> 20 - 50 Households</li>
-<li ><span style="background-color:#669999; height: 1px"></span> 1 - 20 Households</li>
+<li><span style="background-color:#0033A0;height: 8px;"></span>  > 300 HH</li>
+<li><span style="background-color:#0033A0;height: 6px;"></span>    200 - 300 HH</li>
+<li ><span style="background-color:#0033A0;height: 4px;"></span>   100 - 200 HH</li>
+<li ><span style="background-color:#0033A0; height: 3px"></span> 50 - 100 HH</li>
+<li ><span style="background-color:#0033A0; height: 2px"></span> 20 - 50 HH</li>
+<li ><span style="background-color:#0033A0; height: 1px"></span> 1 - 20 HH</li>
 </br>
 </br>
-<li ><span style="background-color:#ff5050; height: 1px; opacity:50%;bottom: 5px"></span> Top 15 districts of origin:
+
+
+<li ><span style="border:solid #ff5050; border-radius: 0em; 
+          border-width:1.4px; padding-left:9px; padding-top:6px; 
+          padding-bottom:6px; margin:2px; width:50px;background-color:rgba(255, 80, 80,0.5);opacity:0.4"></span>Top 15 districts of origin:
+<!--<li ><span style="background-color:#ff5050; height: 1px; opacity:50%;bottom: 5px"></span> Top 15 districts of origin:-->
 <br></br>
-<li >Baydhaba (2,362 HH)</li>
-<li >Qoryooley (1,126 HH)</li>
-<li >Kurtunwaarey (954 HH)</li>
-<li >Diinsoor (898 HH)</li>
-<li >Qansax Dheere (658 HH)</li>
-<li >Afgooye (462 HH)</li>
-<li >Buur Hakaba (443 HH)</li>
-<li >Rab Dhuure (391 HH)</li>
-<li >Marka (356 HH)</li>
-<li >Baraawe (322 HH)</li>
-<li >Waajid (227 HH)</li>
-<li >Balcad (200 HH)</li>
-<li >Jowhar (180 HH)</li>
-<li >Wanla Weyn (162 HH)</li>
-<li >Xudur (156 HH)</li>
-</li>
+<li >1. Baydhaba (2,362 HH)</li>
+<li >2. Qoryooley (1,126 HH)</li>
+<li >3. Kurtunwaarey (954 HH)</li>
+<li >4. Diinsoor (898 HH)</li>
+<li >5. Qansax Dheere (658 HH)</li>
+<li >6. Afgooye (462 HH)</li>
+<li >7. Buur Hakaba (443 HH)</li>
+<li >8. Rab Dhuure (391 HH)</li>
+<li >9. Marka (356 HH)</li>
+<li >10. Baraawe (322 HH)</li>
+<li >11. Waajid (227 HH)</li>
+<li >12. Balcad (200 HH)</li>
+<li >13. Jowhar (180 HH)</li>
+<li >14. Wanla Weyn (162 HH)</li>
+<li >15. Xudur (156 HH)</li>
+ </li>
 
 
 <!--Jenks Natural Breaks Optimization
@@ -408,10 +416,10 @@ GVF	9184779477	11826552815	0.223376446
 }	
 	
 */	
-	var myStyle = {
-    "color": "grey",
-    "weight": 0,
-    "opacity": 0.99
+var myStyle = {
+"color": "#ccc",
+"weight": 0.1,
+"fillOpacity": 0.1
 };
 
 var myStyle1 = {
@@ -441,7 +449,19 @@ L.geoJSON(origin, {
    style: myStyle2
 }).addTo(map);	
 			
-	
+			
+L.geoJson(origin,{
+  onEachFeature: function(feature, layer) {
+    var label = L.marker(layer.getBounds().getCenter(), {
+      icon: L.divIcon({
+        className: 'label',
+        html: '<div style="color:grey" >'+feature.properties.admin2Name+'</div></div>',
+		color: "#ff5050",
+        iconSize: [100, 40]
+      })
+    }).addTo(map);
+  }}
+);
 	
 function getParameterByName(name, url) {
     if (!url) url = window.location.href;
@@ -521,10 +541,10 @@ function getParameterByName(name, url) {
             classMinValue: 0,
               classMaxValue: 20,
               symbol: {
-                strokeStyle: '#669999',
+                strokeStyle: '#0033A0',
                 lineWidth: 0.2,
                 lineCap: 'round',
-                shadowColor: '#669999',
+                shadowColor: '#0033A0',
                 shadowBlur: 0
               }
             },
@@ -534,10 +554,10 @@ function getParameterByName(name, url) {
 			 classMinValue: 21,
               classMaxValue: 50,
               symbol: {
-                strokeStyle: '#669999',
+                strokeStyle: '#0033A0',
                 lineWidth: 1,
                 lineCap: 'round',
-                shadowColor: '#669999',
+                shadowColor: '#0033A0',
                 shadowBlur: 0
               }
             }
@@ -545,10 +565,10 @@ function getParameterByName(name, url) {
               classMinValue: 51,
               classMaxValue: 100,
               symbol: {
-                strokeStyle: '#669999',
+                strokeStyle: '#0033A0',
                 lineWidth: 3,
                 lineCap: 'round',
-                shadowColor: '#669999',
+                shadowColor: '#0033A0',
                 shadowBlur: 0
               }
             }
@@ -557,10 +577,10 @@ function getParameterByName(name, url) {
               classMinValue: 101,
               classMaxValue: 200,
               symbol: {
-                strokeStyle: '#669999',
+                strokeStyle: '#0033A0',
                 lineWidth: 5,
                 lineCap: 'round',
-                shadowColor: '#669999',
+                shadowColor: '#0033A0',
                 shadowBlur: 0
               }
             },
@@ -569,10 +589,10 @@ function getParameterByName(name, url) {
               classMinValue: 201,
               classMaxValue: 300,
               symbol: {
-                strokeStyle: '#669999',
+                strokeStyle: '#0033A0',
                 lineWidth: 10,
                 lineCap: 'round',
-                shadowColor: '#669999',
+                shadowColor: '#0033A0',
                 shadowBlur: 0
               }
             },
@@ -580,10 +600,10 @@ function getParameterByName(name, url) {
               classMinValue: 301,
               classMaxValue: 460,
               symbol: {
-                strokeStyle: '#669999',
+                strokeStyle: '#0033A0',
                 lineWidth: 15,
                 lineCap: 'round',
-                shadowColor: '#669999',
+                shadowColor: '#0033A0',
                 shadowBlur: 0
               }
             }
